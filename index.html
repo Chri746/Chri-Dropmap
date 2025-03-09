@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chri Dropmap</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-image: url('images/Chri Dropmap.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .title {
+            color: black;
+            font-size: 64px;
+            font-family: 'Pacifico', cursive;
+            margin-top: 20px;
+        }
+
+        .container {
+            padding: 50px;
+        }
+
+        .menu {
+            margin: 20px 0;
+        }
+
+        .menu button, #startButton, .city-button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #startButton {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .city-buttons {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="title">Chri Dropmap</div>
+    <div class="container">
+        <div class="menu">
+            <button onclick="selectMode('og')">OG</button>
+            <button onclick="selectMode('battle_royale')">Battaglia Reale / Battle Royale</button>
+        </div>
+        <button id="startButton" onclick="startGame()">Start</button>
+    </div>
+    <div id="cityButtons" class="city-buttons"></div>
+    <script>
+        let selectedMode = '';
+
+        const dropmapLocations = {
+            'og': [
+                { en: 'Junk Junction', it: 'Crocevia del Ciarpame' },
+                { en: 'Haunted Hills', it: 'Montagnole Maledette' },
+                { en: 'Snobby Shores', it: 'Spiagge Snob' },
+                { en: 'Greasy Grove', it: 'Boschetto Bisunto' },
+                { en: 'Shifty Shafts', it: 'Miniere Maledette' },
+                { en: 'Flush Factory', it: 'Magazzino Muffito' },
+                { en: 'Fatal Fields', it: 'Fattoria Frenetica' },
+                { en: 'Moisty Mire', it: 'Paludi Palpitanti' },
+                { en: 'Salty Springs', it: 'Sorgenti Salate' },
+                { en: 'Retail Row', it: 'Corso Commercio' },
+                { en: 'Lonely Lodge', it: 'Bosco Blaterante' },
+                { en: 'Dusty Depot', it: 'Magazzino Muffito' },
+                { en: 'Tomato Town', it: 'Città del Pomodoro' },
+                { en: 'Wailing Woods', it: 'Bosco Bisunto' },
+                { en: 'Anarchy Acres', it: 'Acres Anarchici' },
+                { en: 'Loot Lake', it: 'Lago del Bottino' },
+                { en: 'Tilted Towers', it: 'Torri Inclinati' },
+                { en: 'Pleasant Park', it: 'Parco Pacifico' }
+            ],
+            'battle_royale': [
+                { en: 'Demon\'s Dojo', it: 'Dojo del Demone' },
+                { en: 'Pomped Powers', it: 'Potenze Pompate' },
+                { en: 'Magic Mosses', it: 'Muschio Magico' },
+                { en: 'Flooded Frogs', it: 'Rane Inondate' },
+                { en: 'Whiffy Wharf', it: 'Molo Puzzolente' },
+                { en: 'Lonewolf Lair', it: 'Tana del Lupo Solitario' },
+                { en: 'Brutal Boxcars', it: 'Carri Brutali' },
+                { en: 'Shiny Shafts', it: 'Miniere Splendenti' },
+                { en: 'Outlaw Oasis', it: 'Oasi Fuorilegge' },
+                { en: 'Crime City', it: 'Città del Crimine' },
+                { en: 'Foxy Floodgate', it: 'Chiusa della Volpe' },
+                { en: 'Canyon Crossing', it: 'Attraversamento del Canyon' },
+                { en: 'Shogun\'s Solitude', it: 'Solitudine dello Shogun' },
+                { en: 'Masked Meadows', it: 'Prati Mascherati' },
+                { en: 'Hopeful Heights', it: 'Altezze Speranzose' },
+                { en: 'Kappa Kappa Factory', it: 'Fabbrica Kappa Kappa' },
+                { en: 'Seaport City', it: 'Città Portuale' },
+                { en: 'Shining Span', it: 'Ponte Splendente' }
+            ]
+        };
+
+        function selectMode(mode) {
+            selectedMode = mode;
+            document.getElementById('startButton').style.display = 'block';
+        }
+
+        function startGame() {
+            if (!selectedMode) {
+                alert('Seleziona una modalità per favore!');
+                return;
+            }
+
+            document.querySelector('.menu').style.display = 'none';
+            document.getElementById('startButton').style.display = 'none';
+
+            const cityButtonsContainer = document.getElementById('cityButtons');
+            cityButtonsContainer.innerHTML = '';
+
+            const cities = dropmapLocations[selectedMode];
+            cities.forEach(city => {
+                const cityButton = document.createElement('button');
+                cityButton.className = 'city-button';
+                cityButton.innerText = `${city.en} / ${city.it}`;
+                cityButton.onclick = () => generateDropmap(city.en);
+                cityButtonsContainer.appendChild(cityButton);
+            });
+
+            cityButtonsContainer.style.display = 'block';
+        }
+
+        function generateDropmap(city) {
+            const dropmapSrc = `images/dropmap_${city.replace(/ /g, '_').toLowerCase()}.jpg`; // Assuming the images are named accordingly
+
+            // Allow the user to download the image
+            const downloadLink = document.createElement('a');
+            downloadLink.href = dropmapSrc;
+            downloadLink.download = `dropmap_${city.replace(/ /g, '_').toLowerCase()}.jpg`;
+            downloadLink.click();
+        }
+    </script>
+</body>
+</html>
